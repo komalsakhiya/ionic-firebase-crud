@@ -1,0 +1,109 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>
+      Student Register
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+
+  <form [formGroup]="studentForm" (ngSubmit)="CreateRecord()">
+
+    <ion-item>
+      <ion-label position="floating">Name</ion-label>
+      <ion-input formControlName="name"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Age</ion-label>
+      <ion-input formControlName="age"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Address</ion-label>
+      <ion-input formControlName="address"></ion-input>
+    </ion-item>
+    <ion-item>
+      <input type="file" (change)="selectFile($event)">
+    </ion-item>
+    <ion-item>
+      <ion-button (click)="CreateRecord(studentForm.value)" [disabled]="studentForm.invalid">
+        <ion-icon size="small" slot="icon-only" name="add"></ion-icon>
+        &nbsp;Create Record
+      </ion-button>
+    </ion-item>
+
+  </form>
+  <div *ngIf="studentList.length">
+    <ion-card *ngFor="let student of studentList" color="primary">
+      <span *ngIf="!student.isEdit">
+        <ion-card-header>
+          <ion-avatar style="float: right;">
+            <img src="{{student.image}}" *ngIf="student.image">
+          </ion-avatar>
+          <ion-card-title>{{student.name}} of {{student.age}} years</ion-card-title>
+          <ion-card-subtitle>From: {{student.address}}</ion-card-subtitle>
+
+        </ion-card-header>
+        <ion-card-content>
+
+          <ion-button shape="round" color="secondary" size="small" (click)="editRecord(student)">
+            <ion-icon size="small" slot="icon-only" name="create"></ion-icon>
+
+          </ion-button>
+          <ion-button shape="round" color="danger" size="small" (click)="removeRecord(student)">
+            <ion-icon size="small" slot="icon-only" name="trash"></ion-icon>
+
+          </ion-button>
+        </ion-card-content>
+      </span>
+      <div *ngIf="student.isEdit">
+        <ion-card-header>
+          <ion-card-title>
+            <ion-grid>
+              <ion-row>
+                <ion-col>
+                  Edit
+                </ion-col>
+                <ion-col>
+                  <ion-button fill="solid" color="medium" size="small" (click)="student.isEdit = false">
+                    Cancel
+                  </ion-button>
+                </ion-col>
+                <ion-col>
+                  <ion-button fill="solid" color="success" size="small" (click)="updateRecord(student)">
+                    Update
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item>
+            <ion-label><strong>Name</strong></ion-label>
+            <ion-input type="text" [(ngModel)]="student.EditName"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label><strong>Age</strong></ion-label>
+            <ion-input type="text" [(ngModel)]="student.EditAge"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label><strong>Address</strong></ion-label>
+            <ion-input type="text" [(ngModel)]="student.EditAddress"></ion-input>
+          </ion-item>
+          <ion-item class="profile-image">
+            <label><strong>Profile</strong></label>
+            <ion-avatar>
+              <img src="{{student.EditImage}}" *ngIf="student.EditImage" >
+              <input type="file" hidden #file (change)="selectFile($event)">
+            </ion-avatar>
+            <ion-icon name="camera-outline" (click)="file.click()"></ion-icon>
+          </ion-item>
+        </ion-card-content>
+      </div>
+    </ion-card>
+
+  </div>
+</ion-content>
