@@ -17,7 +17,7 @@
 
     <ion-item>
       <ion-label position="floating">Age</ion-label>
-      <ion-input formControlName="age"></ion-input>
+      <ion-input formControlName="age" type="number"></ion-input>
     </ion-item>
 
     <ion-item>
@@ -87,7 +87,7 @@
           </ion-item>
           <ion-item>
             <ion-label><strong>Age</strong></ion-label>
-            <ion-input type="text" [(ngModel)]="student.EditAge"></ion-input>
+            <ion-input type="number" [(ngModel)]="student.EditAge"></ion-input>
           </ion-item>
           <ion-item>
             <ion-label><strong>Address</strong></ion-label>
@@ -96,7 +96,7 @@
           <ion-item class="profile-image">
             <label><strong>Profile</strong></label>
             <ion-avatar>
-              <img src="{{student.EditImage}}" *ngIf="student.EditImage" >
+              <img src="{{student.EditImage}}" *ngIf="student.EditImage">
               <input type="file" hidden #file (change)="selectFile($event)">
             </ion-avatar>
             <ion-icon name="camera-outline" (click)="file.click()"></ion-icon>
@@ -104,6 +104,8 @@
         </ion-card-content>
       </div>
     </ion-card>
-
+  </div>
+  <div *ngIf="loading">
+    <ion-spinner></ion-spinner>
   </div>
 </ion-content>

@@ -18,3 +18,13 @@
     border-radius: 50%;
   }
 }
+ion-spinner{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: block;
+  margin: auto;
+  left: 0;
+  right: 0;
+  z-index: 1111;
+}

@@ -1,5 +1,7 @@
 {
   "name": "crud-fierbase",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

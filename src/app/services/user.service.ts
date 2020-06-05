@@ -29,7 +29,7 @@ export class UserService {
    * @param {object} data 
    */
   updateStudentDetail(id, data) {
-    this.firestore.doc(this.collectionName + '/' + id).update(data);
+    return this.firestore.doc(this.collectionName + '/' + id).update(data);
   }
 
   /**

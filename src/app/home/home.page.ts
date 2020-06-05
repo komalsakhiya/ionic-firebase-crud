@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { UserService } from '../services/user.service';
-import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/storage';
+import { AngularFireStorage } from '@angular/fire/storage';
 import { Observable } from 'rxjs';
-import { finalize, tap } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -19,6 +19,7 @@ export class HomePage {
   downloadURL: Observable<string>;
   fb;
   file: any;
+  loading: Boolean = false;
 
   constructor(
     public _userService: UserService,
@@ -43,6 +44,7 @@ export class HomePage {
    * @param {object} data 
    */
   CreateRecord(data) {
+    this.loading = true;
     console.log(data);
     var n = Date.now();
     const filePath = `${n}`;
@@ -62,6 +64,7 @@ export class HomePage {
             data['image'] = this.fb;
             this._userService.createStudent(data).then((res) => {
               console.log("add studenet", res);
+              this.loading = false;
               this.studentForm.reset();
             }).catch((err) => {
               console.log(err)
@@ -123,39 +126,55 @@ export class HomePage {
    * @param {object} data 
    */
   updateRecord(data) {
-    var n = Date.now();
-    const filePath = `${n}`;
-    const fileRef = this.storage.ref(filePath);
-    const task = this.storage.upload(`${n}`, this.file);
-    console.log(task)
-    task
-      .snapshotChanges()
-      .pipe(
-        finalize(() => {
-          this.downloadURL = fileRef.getDownloadURL();
-          this.downloadURL.subscribe(url => {
-            if (url) {
-              this.fb = url;
-            }
-            console.log(this.fb);
-            data['image'] = this.fb;
-            let record = {};
-            record['name'] = data.EditName;
-            record['age'] = data.EditAge;
-            record['address'] = data.EditAddress;
-            record['image'] = this.fb;
-            this.storage.storage.refFromURL(data.EditImage).delete();
-            this._userService.updateStudentDetail(data.id, record);
-            data.isEdit = false;
-          });
-        })
-      )
-      .subscribe(url => {
-        if (url) {
-          console.log(url);
-        }
-      });
-
+    this.loading = true;
+    if (this.file) {
+      var n = Date.now();
+      const filePath = `${n}`;
+      const fileRef = this.storage.ref(filePath);
+      const task = this.storage.upload(`${n}`, this.file);
+      console.log(task)
+      task
+        .snapshotChanges()
+        .pipe(
+          finalize(() => {
+            this.downloadURL = fileRef.getDownloadURL();
+            this.downloadURL.subscribe(url => {
+              if (url) {
+                this.fb = url;
+              }
+              console.log(this.fb);
+              data['image'] = this.fb;
+              let record = {};
+              record['name'] = data.EditName;
+              record['age'] = data.EditAge;
+              record['address'] = data.EditAddress;
+              record['image'] = this.fb;
+              this.storage.storage.refFromURL(data.EditImage).delete();
+              this._userService.updateStudentDetail(data.id, record).then((res) => {
+                console.log("update res", res);
+                this.loading = false;
+              }).catch((err) => {
+                console.log(err);
+                this.loading = false
+              })
+              data.isEdit = false;
+            });
+          })
+        )
+        .subscribe(url => {
+          if (url) {
+            console.log(url);
+          }
+        });
+    } else {
+      let record = {};
+      record['name'] = data.EditName;
+      record['age'] = data.EditAge;
+      record['address'] = data.EditAddress;
+      record['image'] = data.EditImage;
+      this._userService.updateStudentDetail(data.id, record);
+      this.loading = false;
+    }
 
   }
 
